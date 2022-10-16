@@ -1,1 +1,1 @@
-export * from './teslaClient';
+export * from './TeslaClient';

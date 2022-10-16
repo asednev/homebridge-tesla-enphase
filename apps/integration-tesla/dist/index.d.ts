@@ -1,2 +1,2 @@
-export * from './teslaClient';
+export * from './TeslaClient';
 //# sourceMappingURL=index.d.ts.map

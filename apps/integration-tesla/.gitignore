@@ -1,6 +1,8 @@
 # secrets file 
 # export cost authToken = `[your token here]`;
-src/secrets.ts 
+src/secrets.ts
+dist/secrets.js
+dist/secrets.*
 
 # Logs
 logs

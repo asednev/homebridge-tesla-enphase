@@ -1,0 +1,1 @@
+{"version":3,"file":"VehicleContainer.d.ts","sourceRoot":"","sources":["../src/VehicleContainer.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,GAAG,MAAM,SAAS,CAAC;AAC/B,OAAO,EAAE,WAAW,EAAE,MAAM,eAAe,CAAC;AAG5C,qBAAa,aAAa;IAEV,OAAO,CAAC,WAAW;IAAe,OAAO,CAAC,SAAS;gBAA3C,WAAW,EAAE,WAAW,EAAU,SAAS,EAAE,MAAM;IAGvE,OAAO,CAAC,UAAU;IAIZ,cAAc;IAKd,WAAW;IAMX,eAAe,CAAC,IAAI,EAAE,MAAM;CAIrC"}

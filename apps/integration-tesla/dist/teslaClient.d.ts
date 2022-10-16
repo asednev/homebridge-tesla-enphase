@@ -1,24 +1,19 @@
-import * as tjs from 'teslajs';
-export declare class TeslaClient {
+import { VehicleClient } from './VehicleContainer';
+import { Vehicle } from './Vehicle';
+export declare class ClientBase {
+    private refreshToken;
     private accessToken;
-    constructor(accessToken: string);
+    constructor(refreshToken: string, accessToken?: string);
     getOptions(vehicleId?: string): {
         authToken: string;
         vehicleID: string;
     };
-    listVehicles(): Promise<{
-        [key: string]: string | number | boolean | null;
-    }[]>;
-    getVehicle(vehicleId: string): VehicleContainer;
+    protected refreshAuthToken(): Promise<unknown>;
+    ensureAuth(): Promise<void>;
 }
-export declare class VehicleContainer {
-    private teslaClient;
-    private vehicleId;
-    constructor(teslaClient: TeslaClient, vehicleId: string);
-    private getOptions;
-    vehicleDetails(): Promise<tjs.Vehicle>;
-    chargeState(): Promise<object>;
-    setChargeLimit(): Promise<void>;
-    setChargingAmps(amps: number): Promise<void>;
+export declare class TeslaClient extends ClientBase {
+    constructor(refreshToken: string, accessToken?: string);
+    listVehicles(): Promise<Vehicle[]>;
+    getVehicle(vehicleId: string): VehicleClient;
 }
-//# sourceMappingURL=teslaClient.d.ts.map
+//# sourceMappingURL=TeslaClient.d.ts.map
