@@ -41,12 +41,19 @@ class VehicleClient {
     }
     async chargeState() {
         const chargeState = await tjs.chargeStateAsync(this.getOptions());
-        return chargeState;
+        return {
+            BatteryLevel: chargeState.battery_level,
+            ChargeAmps: chargeState.charge_amps,
+            ChargeRate: chargeState.charge_rate,
+            ChargerActualCurrent: chargeState.charger_actual_current,
+            ChargerPilotCurrent: chargeState.charger_pilot_current,
+            ChargerVoltage: chargeState.charger_voltage,
+            MinutesToFullCharge: chargeState.minutes_to_full_charge,
+            raw: chargeState
+        };
     }
-    // TODO: needs testing
     async setChargingAmps(amps) {
-        console.warn("untested API call");
-        await tjs.post_commandAsync(this.getOptions(), "set_charging_amps", { charging_amps: amps });
+        await tjs.post_commandAsync(this.getOptions(), "command/set_charging_amps", { charging_amps: amps });
     }
 }
 exports.VehicleClient = VehicleClient;
