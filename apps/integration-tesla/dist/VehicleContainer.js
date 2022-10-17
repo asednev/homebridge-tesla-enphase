@@ -49,7 +49,7 @@ class VehicleClient {
             ChargerPilotCurrent: chargeState.charger_pilot_current,
             ChargerVoltage: chargeState.charger_voltage,
             MinutesToFullCharge: chargeState.minutes_to_full_charge,
-            raw: chargeState
+            Raw: chargeState
         };
     }
     async setChargingAmps(amps) {

@@ -1,5 +1,5 @@
 import { VehicleClient } from './VehicleContainer';
-import { Vehicle } from './Vehicle';
+import { Vehicle } from './types/Vehicle';
 export declare class ClientBase {
     private refreshToken;
     private accessToken;
