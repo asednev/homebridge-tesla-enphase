@@ -1,0 +1,1 @@
+{"version":3,"file":"Vehicle.d.ts","sourceRoot":"","sources":["../../src/tesla/Vehicle.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,gBAAgB,CAAC;AAE9C,MAAM,WAAW,OAAO;IACpB,SAAS,EAAE,MAAM,CAAC;IAClB,GAAG,EAAE,MAAM,CAAC;IACZ,WAAW,EAAE,MAAM,CAAC;IACpB,KAAK,EAAE,YAAY,CAAC;IACpB,GAAG,EAAE,GAAG,CAAC;CACZ"}

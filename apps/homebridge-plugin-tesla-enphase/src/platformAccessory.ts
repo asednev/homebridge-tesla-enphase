@@ -1,15 +1,27 @@
 import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
-
+import { Vehicle } from 'core';
+import { TeslaClient } from 'integration-tesla';
+import { VehicleClient } from 'integration-tesla/dist/VehicleContainer';
 import { TeslaEnphasePlatform } from './platform';
+import homebridgeLib from 'homebridge-lib';
 
 /**
  * Platform Accessory
  * An instance of this class is created for each accessory your platform registers
  * Each accessory may expose multiple services of different service types.
  */
+
 export class TeslaVehicleAccessory {
+
+  // Homebridge Platform
   private service: Service;
 
+  // Integrations
+  private teslaClient: TeslaClient;
+  private vehicleClient: VehicleClient;
+
+
+  private eve: any;
   /**
    * These are just used to create a working example
    * You should implement your own code to track the state of your accessory
@@ -24,11 +36,25 @@ export class TeslaVehicleAccessory {
     private readonly accessory: PlatformAccessory,
   ) {
 
+    
+
+    const vehicleItem: Vehicle = accessory.context.vehicleItem;
+    if (!vehicleItem) {
+      this.platform.log.error('Vehicle is not initialized');
+      throw new Error("Vehicle is not initialized");
+    }
+
+    const accessToken = accessory.context.accessToken;
+    const refreshToken = this.platform.config.teslaRefreshToken;
+
+    this.teslaClient = new TeslaClient(refreshToken, accessToken);
+    this.vehicleClient = this.teslaClient.getVehicle(vehicleItem.VehicleId);
+
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Tesla Enphase')
       .setCharacteristic(this.platform.Characteristic.Model, 'Default-Model')
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, 'Default-Serial');
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, vehicleItem.Vin);
 
     // get the Switch service if it exists, otherwise create a new Switch service
     // you can create multiple services for each accessory
@@ -36,7 +62,7 @@ export class TeslaVehicleAccessory {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.exampleDisplayName);
+    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.vehicleItem.DisplayName);
 
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Lightbulb
@@ -46,6 +72,17 @@ export class TeslaVehicleAccessory {
       .onSet(this.setOn.bind(this))                // SET - bind to the `setOn` method below
       .onGet(this.getOn.bind(this));               // GET - bind to the `getOn` method below
 
+    this.eve = new homebridgeLib.EveHomeKitTypes(this.platform.api);
+    const voltageCharacteristic = this.eve.Characteristics.Voltage;
+        
+
+    this.platform.log.debug('voltageCharacteristic', voltageCharacteristic);
+    
+    this.service.addOptionalCharacteristic(voltageCharacteristic);
+
+    //this.service.getCharacteristic(voltageCharacteristic).
+    this.platform.log.debug('Set VoltsCharacteristic => 240');
+    this.service.setCharacteristic(voltageCharacteristic, 240.0);
 
     /**
      * Creating multiple services of the same type.
@@ -99,6 +136,20 @@ export class TeslaVehicleAccessory {
     this.exampleStates.On = value as boolean;
 
     this.platform.log.debug('Set Characteristic On ->', value);
+
+    setTimeout(async () => {
+
+      // refresh current draw
+      try {
+        const chargeState = await this.vehicleClient.chargeState();
+        this.platform.log.debug('chargeState', chargeState);
+      } catch (err) {
+        this.platform.log.debug('chargeState fetch failed', err);
+      }
+
+
+    }, 0);
+
   }
 
   /**
