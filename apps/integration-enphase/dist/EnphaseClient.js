@@ -20,8 +20,34 @@ class EnphaseClient {
             })
         });
     }
-    async getProduction() {
+    async getIvpMeters() {
+        const response = await this.axios.get('/ivp/meters');
+        const data = EnphaseClient.dataOrError(response);
+        if (!Array.isArray(data)) {
+            throw new Error('Invalid shape of response: /ivp/meters');
+        }
+        return data.map(x => ({
+            Id: x.eid,
+            State: x.state,
+            MeasurementType: x.measurementType,
+        }));
+    }
+    async getIvpMetersReadings() {
         const response = await this.axios.get('/ivp/meters/readings');
+        const data = EnphaseClient.dataOrError(response);
+        if (!Array.isArray(data)) {
+            throw new Error('Invalid shape of response: /ivp/meters/readings');
+        }
+        return data.map(x => ({
+            Id: x.eid,
+            Timestamp: new Date(x.timestamp * 1000),
+            ActivePower: x.activePower,
+            Voltage: x.voltage,
+            Current: x.current,
+        }));
+    }
+    async getProductionInverters() {
+        const response = await this.axios.get('/api/v1/production/inverters');
         return EnphaseClient.dataOrError(response);
     }
     static dataOrError(response) {
