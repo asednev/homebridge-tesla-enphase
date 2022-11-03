@@ -12,6 +12,7 @@
   "author": "Alexey Sednev",
   "license": "MIT",
   "dependencies": {
+    "core": "../core",
     "request": "^2.88.2",
     "teslajs": "^4.10.0",
     "typescript": "^4.8.4"

@@ -18,7 +18,6 @@ const proc = async () => {
         return;
     }
 
-
     const vehicle = await client.getVehicle("1493005310753046");
     console.log(await vehicle.vehicleDetails());
 

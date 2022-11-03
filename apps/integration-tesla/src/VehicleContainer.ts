@@ -1,5 +1,5 @@
 import * as tjs from 'teslajs';
-import { ChargeState } from './types/ChargeState';
+import { ChargeState } from 'core';
 import { TeslaClient } from './TeslaClient';
 
 export class VehicleClient {

@@ -1,8 +1,7 @@
 import * as tjs from 'teslajs';
 import { VehicleClient } from './VehicleContainer';
 import * as request from 'request';
-import { Vehicle } from './types/Vehicle';
-import { VehicleState } from './types/VehicleState';
+import { Vehicle, VehicleState } from 'core';
 
 export class ClientBase {
 
