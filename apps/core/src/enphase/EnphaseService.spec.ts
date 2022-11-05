@@ -14,7 +14,8 @@ describe("EnphaseService", () => {
             { Id: 1, Timestamp: new Date(), ActivePower: 42, Voltage: 24, Current: 2, }
         ]);
 
-        const actualPower = service.getProductionPower(bundle);
+        const production = service.getProduction(bundle)
+        const actualPower = production.Power;
 
         expect(actualPower).toBe(42);
 
@@ -22,7 +23,10 @@ describe("EnphaseService", () => {
 
     it('should return 0 when no producing', () => {
         const bundle = new IvpMeterBundle([], []);
-        const actualPower = service.getProductionPower(bundle);
+
+        const production = service.getProduction(bundle)
+        const actualPower = production.Power;
+        
         expect(actualPower).toBe(0);
     });
 

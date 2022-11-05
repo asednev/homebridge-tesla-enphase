@@ -15,8 +15,8 @@ const proc = async () => {
         return;
     }
     const vehicle = await client.getVehicle("1493005310753046");
-    console.log(await vehicle.vehicleDetails());
+    //console.log(await vehicle.vehicleDetails());
     // await vehicle.setChargingAmps(5);
-    // console.log(await vehicle.chargeState());
+    console.log('chargeState', await vehicle.chargeState());
 };
 proc();
