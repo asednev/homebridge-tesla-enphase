@@ -33,4 +33,12 @@ export class VehicleClient implements ITeslaVehicleClient {
     async setChargingAmps(amps: number) {
         await tjs.post_commandAsync(this.getOptions(), "command/set_charging_amps", { charging_amps: amps });
     }
+
+    async startCharge() {
+        await tjs.startChargeAsync(this.getOptions());
+    }
+
+    async stopCharge() {
+        await tjs.stopChargeAsync(this.getOptions());
+    }
 }

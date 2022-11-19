@@ -9,5 +9,7 @@ export declare class VehicleClient implements ITeslaVehicleClient {
     vehicleDetails(): Promise<tjs.Vehicle>;
     chargeState(): Promise<ChargeState>;
     setChargingAmps(amps: number): Promise<void>;
+    startCharge(): Promise<void>;
+    stopCharge(): Promise<void>;
 }
 //# sourceMappingURL=VehicleClient.d.ts.map

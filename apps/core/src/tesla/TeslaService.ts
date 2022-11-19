@@ -25,15 +25,22 @@ export class TeslaVehicleService {
 
     setTargetChargeRate(targetAmps: number) {
 
+        const minChargeThreshold = 5; // 5 Amps is the slower charging mode supported
+
+        // stop charging if target is less than threshold
+        if(targetAmps < minChargeThreshold) {
+            targetAmps = 0;
+        }
+
         if (targetAmps === this.latestChargeState.ChargeAmps) {
             // no op
         } else if (targetAmps === 0 && this.latestChargeState.ChargeAmps > 0) {
             // stop
-            console.log('TODO stop charging');
-        } else if (this.latestChargeState.ChargeAmps === 0) {
+            this.vehicleClient.stopCharge();
+        } else if (this.latestChargeState.ChargeAmps === 0 && targetAmps >= minChargeThreshold) {
             // start
-            console.log('TODO start charging');
-        } else {
+            this.vehicleClient.startCharge();
+        } else if (targetAmps >= minChargeThreshold) {
             // adjust amps
             this.vehicleClient.setChargingAmps(targetAmps);
         }

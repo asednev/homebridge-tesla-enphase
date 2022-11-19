@@ -55,5 +55,11 @@ class VehicleClient {
     async setChargingAmps(amps) {
         await tjs.post_commandAsync(this.getOptions(), "command/set_charging_amps", { charging_amps: amps });
     }
+    async startCharge() {
+        await tjs.startChargeAsync(this.getOptions());
+    }
+    async stopCharge() {
+        await tjs.stopChargeAsync(this.getOptions());
+    }
 }
 exports.VehicleClient = VehicleClient;

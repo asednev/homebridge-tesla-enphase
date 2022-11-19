@@ -11,20 +11,23 @@ const proc = async () => {
     await client.ensureAuth();
 
     try {
-        const vehicles = await client.listVehicles();
-        console.log(vehicles);
+        // const vehicles = await client.listVehicles();
+        // console.log(vehicles);
     } catch (err) {
         console.log('err', err);
         return;
     }
 
+
     const vehicle = await client.getVehicle("1493005310753046");
-    //console.log(await vehicle.vehicleDetails());
+
+    console.log('vehicleDetails', await vehicle.vehicleDetails());
 
     // await vehicle.setChargingAmps(5);
 
     console.log('chargeState', await vehicle.chargeState());
 
+    
 
 };
 proc();

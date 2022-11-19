@@ -1,6 +1,8 @@
 import { ChargeState } from ".";
 
-export interface ITeslaVehicleClient {
-    chargeState(): Promise<ChargeState>;
-    setChargingAmps(amps: number): void;
+export abstract class ITeslaVehicleClient {
+    abstract chargeState(): Promise<ChargeState>;
+    abstract setChargingAmps(amps: number): void;
+    abstract startCharge(): void;
+    abstract stopCharge(): void;
 }
