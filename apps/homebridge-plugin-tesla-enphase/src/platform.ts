@@ -3,6 +3,7 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { TeslaVehicleAccessory } from './platformAccessory';
 import { TeslaClient } from 'integration-tesla';
+import { EnphaseClient } from 'integration-enphase';
 
 /**
  * HomebridgePlatform
@@ -26,7 +27,25 @@ export class TeslaEnphasePlatform implements DynamicPlatformPlugin {
   ) {
     this.log.debug('Finished initializing platform');
 
-    this.teslaClient = new TeslaClient(this.config.teslaRefreshToken);
+    const teslaRefreshToken = this.config.tesla?.refreshToken;
+    if (!teslaRefreshToken) {
+      this.log.error('Missing Tesla refresh token');
+      throw new Error();
+    }
+
+    const enphaseAccessToken = this.config.enphase?.accessToken;
+    if (!enphaseAccessToken) {
+      this.log.error("Missing Enphase access token");
+      throw new Error();
+    }
+
+    const enphaseHost = this.config.enphase?.host;
+    if (!enphaseHost) {
+      this.log.error("Missing Enphase host name");
+      throw new Error();
+    }
+
+    this.teslaClient = new TeslaClient(teslaRefreshToken);
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
     // Dynamic Platform plugins should only register new accessories after this event was fired,
@@ -59,12 +78,12 @@ export class TeslaEnphasePlatform implements DynamicPlatformPlugin {
 
     try {
       await this.teslaClient.ensureAuth();
-    } catch(err) {
+    } catch (err) {
       this.log.error("Tesla Authentication Failed", err);
-      return;      
+      return;
     }
 
-    const vehicleList =  await this.teslaClient.listVehicles();
+    const vehicleList = await this.teslaClient.listVehicles();
 
     this.log.debug('Tesla vehicles', vehicleList);
 
@@ -86,7 +105,7 @@ export class TeslaEnphasePlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         existingAccessory.context.vehicleItem = vehicleItem;
-        existingAccessory.context.accessToken = this.teslaClient.getOptions().authToken;
+        existingAccessory.context.teslaAccessToken = this.teslaClient.getOptions().authToken;
         this.api.updatePlatformAccessories([existingAccessory]);
 
         // create the accessory handler for the restored accessory
@@ -107,7 +126,7 @@ export class TeslaEnphasePlatform implements DynamicPlatformPlugin {
         // store a copy of the device object in the `accessory.context`
         // the `context` property can be used to store any data about the accessory you may need
         accessory.context.vehicleItem = vehicleItem;
-        accessory.context.accessToken = this.teslaClient.getOptions().authToken;
+        accessory.context.teslaAccessToken = this.teslaClient.getOptions().authToken;
 
         // create the accessory handler for the newly create accessory
         // this is imported from `platformAccessory.ts`

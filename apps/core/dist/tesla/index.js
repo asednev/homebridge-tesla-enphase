@@ -18,3 +18,5 @@ __exportStar(require("./ChargeState"), exports);
 __exportStar(require("./ErrorCode"), exports);
 __exportStar(require("./Vehicle"), exports);
 __exportStar(require("./VehicleState"), exports);
+__exportStar(require("./ITeslaVehicleClient"), exports);
+__exportStar(require("./TeslaService"), exports);

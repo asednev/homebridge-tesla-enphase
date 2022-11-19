@@ -1,8 +1,8 @@
 import * as tjs from 'teslajs';
-import { ChargeState } from 'core';
+import { ChargeState, ITeslaVehicleClient } from 'core';
 import { TeslaClient } from './TeslaClient';
 
-export class VehicleClient {
+export class VehicleClient implements ITeslaVehicleClient {
 
     constructor(private teslaClient: TeslaClient, private vehicleId: string) {
     }

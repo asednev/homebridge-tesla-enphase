@@ -1,5 +1,5 @@
-import { IvpMeter, IvpMeterReading } from 'core';
-export declare class EnphaseClient {
+import { IvpMeter, IvpMeterReading, IEnphaseClient } from 'core';
+export declare class EnphaseClient implements IEnphaseClient {
     private axios;
     constructor(host: string, token: string);
     getIvpMeters(): Promise<IvpMeter[]>;

@@ -1,9 +1,11 @@
 import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
-import { Vehicle } from 'core';
-import { TeslaClient } from 'integration-tesla';
-import { VehicleClient } from 'integration-tesla/dist/VehicleContainer';
+import { IvpMeterBundle, Vehicle, EnphaseService, SmartChargingService, TeslaVehicleService, SmartChargingOptions } from 'core';
+import { TeslaClient, VehicleClient } from 'integration-tesla';
 import { TeslaEnphasePlatform } from './platform';
 import homebridgeLib from 'homebridge-lib';
+import { EnphaseClient } from 'integration-enphase';
+import { ChargeState } from 'core';
+import { Node } from '@tensorflow/tfjs-layers/dist/engine/topology';
 
 /**
  * Platform Accessory
@@ -17,11 +19,18 @@ export class TeslaVehicleAccessory {
   private service: Service;
 
   // Integrations
+  private enphaseClient: EnphaseClient;
   private teslaClient: TeslaClient;
   private vehicleClient: VehicleClient;
 
 
+  // Services
+  private smartCharging: SmartChargingService;
+
   private eve: any;
+
+  private timerId?: NodeJS.Timeout;
+
   /**
    * These are just used to create a working example
    * You should implement your own code to track the state of your accessory
@@ -31,12 +40,13 @@ export class TeslaVehicleAccessory {
     Brightness: 100,
   };
 
+
   constructor(
     private readonly platform: TeslaEnphasePlatform,
     private readonly accessory: PlatformAccessory,
   ) {
 
-    
+
 
     const vehicleItem: Vehicle = accessory.context.vehicleItem;
     if (!vehicleItem) {
@@ -44,11 +54,21 @@ export class TeslaVehicleAccessory {
       throw new Error("Vehicle is not initialized");
     }
 
-    const accessToken = accessory.context.accessToken;
-    const refreshToken = this.platform.config.teslaRefreshToken;
+    const teslaRefreshToken = this.platform.config.tesla.refreshToken;
+    const teslaAccessToken = accessory.context.teslaAccessToken;
 
-    this.teslaClient = new TeslaClient(refreshToken, accessToken);
+    this.teslaClient = new TeslaClient(teslaRefreshToken, teslaAccessToken);
     this.vehicleClient = this.teslaClient.getVehicle(vehicleItem.VehicleId);
+
+    const enphaseAccessToken = this.platform.config.enphase.accessToken;
+    const enphaseHost = this.platform.config.enphase.host;
+
+    this.enphaseClient = new EnphaseClient(enphaseHost, enphaseAccessToken);
+
+    const enphaseService = new EnphaseService(this.enphaseClient);
+    const vehicleService = new TeslaVehicleService(this.vehicleClient);
+    const options = new SmartChargingOptions();
+    this.smartCharging = new SmartChargingService(enphaseService, vehicleService, options);
 
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
@@ -74,10 +94,10 @@ export class TeslaVehicleAccessory {
 
     this.eve = new homebridgeLib.EveHomeKitTypes(this.platform.api);
     const voltageCharacteristic = this.eve.Characteristics.Voltage;
-        
+
 
     this.platform.log.debug('voltageCharacteristic', voltageCharacteristic);
-    
+
     this.service.addOptionalCharacteristic(voltageCharacteristic);
 
     //this.service.getCharacteristic(voltageCharacteristic).
@@ -137,19 +157,28 @@ export class TeslaVehicleAccessory {
 
     this.platform.log.debug('Set Characteristic On ->', value);
 
-    setTimeout(async () => {
+    if (value) {
+      this.platform.log.debug("start timer");
 
-      // refresh current draw
-      try {
-        const chargeState = await this.vehicleClient.chargeState();
-        this.platform.log.debug('chargeState', chargeState);
-      } catch (err) {
-        this.platform.log.debug('chargeState fetch failed', err);
-      }
+      this.timerId = setInterval(this.TimerProc.bind(this), 60000);
 
+      // invoke right away
+      await this.TimerProc();
 
-    }, 0);
+    } else if (this.timerId !== undefined) {
 
+      clearTimeout(this.timerId);
+      this.timerId = undefined;
+    }
+
+  }
+
+  async TimerProc() {
+    try {
+      await this.smartCharging.invoke();
+    } catch (err) {
+      this.platform.log.error('smartCharging.invoke failed', err);
+    }
   }
 
   /**

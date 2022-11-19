@@ -5,11 +5,38 @@
   "schema": {
     "type": "object",
     "properties": {
-      "teslaRefreshToken": {
-        "title": "Tesla Refresh Token",
-        "type": "string",
-        "required": true,
-        "default": ""
+      "tesla": {
+        "title": "Tesla",
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "title": "Tesla Refresh Token",
+            "type": "string",
+            "required": true,
+            "placeholder": "eyJ...",
+            "description": "How to generate refresh token: https://teslascope.com/help/generating-tokens"
+          }
+        }
+      },
+      "enphase": {
+        "title": "Enphase IQ Gateway",
+        "type": "object",
+        "properties": {
+          "host": {
+            "title": "Host",
+            "type": "string",
+            "description": "IQ Gateway hostname or IP address",
+            "default": "envoy.local",
+            "required": true
+          },
+          "accessToken": {
+            "title": "Access Token",
+            "type": "string",
+            "placeholder": "eyJ...",
+            "description": "Create access token at https://entrez.enphaseenergy.com/",
+            "required": true
+          }
+        }
       }
     }
   }

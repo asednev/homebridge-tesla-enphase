@@ -1,7 +1,12 @@
+import { IEnphaseClient } from "./IEnphaseClient";
 import { MeasurementType, MeterState } from "./IvpMeter";
 import { IvpMeterBundle } from "./IvpMeterBundle";
 
 export class EnphaseService {
+
+    constructor(private enphaseClient: IEnphaseClient) {
+
+    }
 
     public static NoProduction = {
         Power: 0,
@@ -9,7 +14,26 @@ export class EnphaseService {
         Current: 0
     };
 
-    getProduction(bundle: IvpMeterBundle) {
+    async getCurrentProduction(): Promise<IvpMeterBundle> {
+
+        try {
+
+            const meters = await this.enphaseClient.getIvpMeters();
+            const readings = await this.enphaseClient.getIvpMetersReadings();
+    
+            const enphaseBundle = new IvpMeterBundle(meters, readings);
+            return enphaseBundle;
+
+        } catch(err) {
+            return {
+                Meters: [],
+                Readings: []
+            }
+        }
+
+    }
+
+    calculateProductionPower(bundle: IvpMeterBundle) {
         const productionMeters = bundle.Meters.filter(x => x.MeasurementType === MeasurementType.Production &&
             x.State === MeterState.Enabled);
             

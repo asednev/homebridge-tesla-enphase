@@ -1,7 +1,7 @@
 import * as tjs from 'teslajs';
-import { ChargeState } from 'core';
+import { ChargeState, ITeslaVehicleClient } from 'core';
 import { TeslaClient } from './TeslaClient';
-export declare class VehicleClient {
+export declare class VehicleClient implements ITeslaVehicleClient {
     private teslaClient;
     private vehicleId;
     constructor(teslaClient: TeslaClient, vehicleId: string);
@@ -10,4 +10,4 @@ export declare class VehicleClient {
     chargeState(): Promise<ChargeState>;
     setChargingAmps(amps: number): Promise<void>;
 }
-//# sourceMappingURL=VehicleContainer.d.ts.map
+//# sourceMappingURL=VehicleClient.d.ts.map

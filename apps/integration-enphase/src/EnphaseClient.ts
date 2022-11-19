@@ -1,8 +1,8 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import https from 'https';
-import { IvpMeter, IvpMeterReading } from 'core';
+import { IvpMeter, IvpMeterReading, IEnphaseClient } from 'core';
 
-export class EnphaseClient {
+export class EnphaseClient implements IEnphaseClient {
 
     private axios: AxiosInstance;
 

@@ -25,7 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TeslaClient = exports.ClientBase = void 0;
 const tjs = __importStar(require("teslajs"));
-const VehicleContainer_1 = require("./VehicleContainer");
+const VehicleClient_1 = require("./VehicleClient");
 const request = __importStar(require("request"));
 class ClientBase {
     refreshToken;
@@ -96,7 +96,7 @@ class TeslaClient extends ClientBase {
         });
     }
     getVehicle(vehicleId) {
-        return new VehicleContainer_1.VehicleClient(this, vehicleId);
+        return new VehicleClient_1.VehicleClient(this, vehicleId);
     }
 }
 exports.TeslaClient = TeslaClient;
